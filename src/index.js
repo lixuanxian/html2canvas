@@ -19,6 +19,7 @@ export type Options = {
     onclone?: Document => void,
     proxy: ?string,
     removeContainer: ?boolean,
+    reuseContainer: ?boolean,
     scale: number,
     target: RenderTarget<*>,
     useCORS: boolean,
@@ -34,6 +35,7 @@ export type Options = {
 
 const html2canvas = (element: HTMLElement, conf: ?Options): Promise<*> => {
     const config = conf || {};
+    config.removeContainer = !config.reuseContainer || config.removeContainer;
     const logger = new Logger(typeof config.logging === 'boolean' ? config.logging : true);
     logger.log(`html2canvas ${__VERSION__}`);
 

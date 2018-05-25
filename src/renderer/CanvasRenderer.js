@@ -41,6 +41,12 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
 
     render(options: RenderOptions) {
         this.ctx = this.canvas.getContext('2d');
+        options.logger.log(
+            `auto clean the content for re-use`
+        );
+        //will auto clean
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         this.options = options;
         this.canvas.width = Math.floor(options.width * options.scale);
         this.canvas.height = Math.floor(options.height * options.scale);

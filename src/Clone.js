@@ -183,7 +183,7 @@ export class DocumentCloner {
                 .then(documentElement => {
                     return this.renderer(
                         documentElement,
-                        {
+                        {  
                             async: this.options.async,
                             allowTaint: this.options.allowTaint,
                             backgroundColor: '#ffffff',
@@ -192,6 +192,7 @@ export class DocumentCloner {
                             logging: this.options.logging,
                             proxy: this.options.proxy,
                             removeContainer: this.options.removeContainer,
+                            reuseContainer:  this.options.reuseContainer,
                             scale: this.options.scale,
                             foreignObjectRendering: this.options.foreignObjectRendering,
                             useCORS: this.options.useCORS,
@@ -283,7 +284,7 @@ export class DocumentCloner {
                         // $FlowFixMe
                         !this.options.ignoreElements(child)))
             ) {
-                if (!this.copyStyles || child.nodeName !== 'STYLE') {
+                 if (!this.copyStyles || child.nodeName !== 'STYLE' ) {
                     clone.appendChild(this.cloneNode(child));
                 }
             }
@@ -523,11 +524,11 @@ const getIframeDocumentElement = (
                   .then(html =>
                       createIframeContainer(
                           node.ownerDocument,
-                          parseBounds(node, 0, 0)
+                          parseBounds(node, 0, 0),
+                          options
                       ).then(cloneIframeContainer => {
                           const cloneWindow = cloneIframeContainer.contentWindow;
                           const documentClone = cloneWindow.document;
-
                           documentClone.open();
                           documentClone.write(html);
                           const iframeLoad = iframeLoader(cloneIframeContainer).then(
@@ -544,11 +545,24 @@ const getIframeDocumentElement = (
 
 const createIframeContainer = (
     ownerDocument: Document,
-    bounds: Bounds
-): Promise<HTMLIFrameElement> => {
-    const cloneIframeContainer = ownerDocument.createElement('iframe');
+    bounds: Bounds,
+    options: Options,
+ ): Promise<HTMLIFrameElement> => {
+ 
+    if(options.reuseContainer && ownerDocument.getElementById("html2canvas-container-reuse")){
 
+        const reuseIframe = ownerDocument.getElementById("html2canvas-container-reuse");
+        reuseIframe.isReuse = true;
+         return Promise.resolve(reuseIframe);
+    }
+
+    const cloneIframeContainer = ownerDocument.createElement('iframe');
+    cloneIframeContainer.isReuse = false;
     cloneIframeContainer.className = 'html2canvas-container';
+    if(options.reuseContainer){
+        cloneIframeContainer.id = 'html2canvas-container-reuse';
+    }
+
     cloneIframeContainer.style.visibility = 'hidden';
     cloneIframeContainer.style.position = 'fixed';
     cloneIframeContainer.style.left = '-10000px';
@@ -574,6 +588,10 @@ const iframeLoader = (cloneIframeContainer: HTMLIFrameElement): Promise<HTMLIFra
     const documentClone = cloneWindow.document;
 
     return new Promise((resolve, reject) => {
+        if(documentClone.body.childNodes.length > 0 &&
+            documentClone.readyState === 'complete'){
+                resolve(cloneIframeContainer);
+            }else{
         cloneWindow.onload = cloneIframeContainer.onload = documentClone.onreadystatechange = () => {
             const interval = setInterval(() => {
                 if (
@@ -585,6 +603,7 @@ const iframeLoader = (cloneIframeContainer: HTMLIFrameElement): Promise<HTMLIFra
                 }
             }, 50);
         };
+    }
     });
 };
 
@@ -596,19 +615,64 @@ export const cloneWindow = (
     logger: Logger,
     renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
 ): Promise<[HTMLIFrameElement, HTMLElement, ResourceLoader]> => {
+    if (__DEV__) {
+        logger.log(`start cloneWindow DocumentCloner`);
+    }
     const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer);
+    if (__DEV__) {
+        logger.log(`end cloneWindow DocumentCloner`);
+    }
     const scrollX = ownerDocument.defaultView.pageXOffset;
     const scrollY = ownerDocument.defaultView.pageYOffset;
 
-    return createIframeContainer(ownerDocument, bounds).then(cloneIframeContainer => {
+    return createIframeContainer(ownerDocument, bounds , options).then(cloneIframeContainer => {
+        if (__DEV__) {
+            logger.log( cloneIframeContainer.isReuse ? `reuseIframeContainer` : `createIframeContainer`);
+        }
+
+        const isReuseIframe = cloneIframeContainer.isReuse
+
         const cloneWindow = cloneIframeContainer.contentWindow;
         const documentClone = cloneWindow.document;
+
+        if (__DEV__) {
+            logger.log(`documentClone`);
+        }
+        if(!isReuseIframe){
+            documentClone.open();
+            documentClone.write(`${serializeDoctype(document.doctype)}<html><head></head><body></body></html>`);
+             // Chrome scrolls the parent document for some reason after the write to the cloned window???
+            restoreOwnerScroll(referenceElement.ownerDocument, scrollX, scrollY);
+            documentClone.replaceChild(
+                documentClone.adoptNode(cloner.documentElement),
+                documentClone.documentElement
+            );
+            documentClone.close();
+
+        }else{
+            
+            documentClone.documentElement.querySelector('head').replaceWith(
+                documentClone.adoptNode(cloner.documentElement.querySelector('head'))
+            );
+
+            documentClone.documentElement.querySelector('body').replaceWith(
+                documentClone.adoptNode(cloner.documentElement.querySelector('body'))
+            );
+        }
+  
+ 
+        if (__DEV__) {
+            logger.log(`documentClone end`);
+        }
 
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
              if window url is about:blank, we can assign the url to current by writing onto the document
              */
 
         const iframeLoad = iframeLoader(cloneIframeContainer).then(() => {
+            if (__DEV__) {
+                logger.log(`iframeLoader`);
+            }
             cloner.scrolledElements.forEach(initNode);
             cloneWindow.scrollTo(bounds.left, bounds.top);
             if (
@@ -640,17 +704,7 @@ export const cloneWindow = (
                           : ''
                   );
         });
-
-        documentClone.open();
-        documentClone.write(`${serializeDoctype(document.doctype)}<html></html>`);
-        // Chrome scrolls the parent document for some reason after the write to the cloned window???
-        restoreOwnerScroll(referenceElement.ownerDocument, scrollX, scrollY);
-        documentClone.replaceChild(
-            documentClone.adoptNode(cloner.documentElement),
-            documentClone.documentElement
-        );
-        documentClone.close();
-
+     
         return iframeLoad;
     });
 };

@@ -590,7 +590,7 @@ const iframeLoader = (cloneIframeContainer: HTMLIFrameElement): Promise<HTMLIFra
     return new Promise((resolve, reject) => {
         if(documentClone.body.childNodes.length > 0 &&
             documentClone.readyState === 'complete'){
-                resolve(cloneIframeContainer);
+                 resolve(cloneIframeContainer);
             }else{
         cloneWindow.onload = cloneIframeContainer.onload = documentClone.onreadystatechange = () => {
             const interval = setInterval(() => {
@@ -635,35 +635,7 @@ export const cloneWindow = (
         const cloneWindow = cloneIframeContainer.contentWindow;
         const documentClone = cloneWindow.document;
 
-        if (__DEV__) {
-            logger.log(`documentClone`);
-        }
-        if(!isReuseIframe){
-            documentClone.open();
-            documentClone.write(`${serializeDoctype(document.doctype)}<html><head></head><body></body></html>`);
-             // Chrome scrolls the parent document for some reason after the write to the cloned window???
-            restoreOwnerScroll(referenceElement.ownerDocument, scrollX, scrollY);
-            documentClone.replaceChild(
-                documentClone.adoptNode(cloner.documentElement),
-                documentClone.documentElement
-            );
-            documentClone.close();
-
-        }else{
-            
-            documentClone.documentElement.querySelector('head').replaceWith(
-                documentClone.adoptNode(cloner.documentElement.querySelector('head'))
-            );
-
-            documentClone.documentElement.querySelector('body').replaceWith(
-                documentClone.adoptNode(cloner.documentElement.querySelector('body'))
-            );
-        }
-  
- 
-        if (__DEV__) {
-            logger.log(`documentClone end`);
-        }
+   
 
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
              if window url is about:blank, we can assign the url to current by writing onto the document
@@ -704,6 +676,38 @@ export const cloneWindow = (
                           : ''
                   );
         });
+
+        if (__DEV__) {
+            logger.log(`documentClone`);
+        }
+        if(isReuseIframe){
+             
+            // documentClone.documentElement.querySelector('head').replaceWith(
+            //     documentClone.adoptNode(cloner.documentElement.querySelector('head'))
+            // );
+
+            documentClone.documentElement.querySelector('body').replaceWith(
+                documentClone.adoptNode(cloner.documentElement.querySelector('body'))
+            );
+
+        }else{ 
+
+            documentClone.open();
+            documentClone.write(`${serializeDoctype(document.doctype)}<html><head></head></body></body></html>`);
+             // Chrome scrolls the parent document for some reason after the write to the cloned window???
+            restoreOwnerScroll(referenceElement.ownerDocument, scrollX, scrollY);
+            documentClone.replaceChild(
+                documentClone.adoptNode(cloner.documentElement),
+                documentClone.documentElement
+            );
+            documentClone.close();
+
+        }
+
+
+        if (__DEV__) {
+            logger.log(`documentClone end`);
+        }
      
         return iframeLoad;
     });

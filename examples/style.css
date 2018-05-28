@@ -1,0 +1,51 @@
+canvas {
+    border: 1px solid black;
+}
+
+button {
+    clear: both;
+    display: block;
+}
+
+#content {
+    background: rgba(100, 255, 255, 0.5);
+    padding: 50px 10px;
+}
+
+#clean-count {
+    color: red;
+}
+
+#demo-menu {
+    width: 948px;
+    height: 110px;
+}
+
+#demo-menu .icon-item {
+    width: 70px;
+    padding: 2px;
+    height: 92px;
+    float: left;
+    border: 1px solid red;
+    margin: 10px;
+    cursor: pointer;
+    background-color: gray;
+}
+
+#demo-menu .icon-item.active {
+    border-color: green;
+
+}
+
+#demo-menu .icon-item .icon {
+    display: inline-block;
+    vertical-align: top;
+    height: 64px;
+    width: 64px;
+    background-image: url('google-icon-69.png');
+}
+
+#demo-menu .icon-item .title {
+    text-align: center;
+    font-size: 12px;
+}

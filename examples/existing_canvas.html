@@ -1,68 +1,152 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>Using an existing canvas to draw on</title>
-    <style>
-        canvas {
-            border: 1px solid black;
-        }
-        button {
-            clear: both;
-            display: block;
-        }
-        #content {
-            background: rgba(100, 255, 255, 0.5);
-            padding: 50px 10px;
-        }
-        #clean-count{
-            color:red;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div><h1>HTML content to render:</h1>
-    <div id="content">
-        Render the content in this element <strong>only</strong> onto the existing canvas element
-        <div> actions-count : <span id="clean-count"> 0</span></div>
+    <div>
+        <h1>HTML content to render:</h1>
+        <div id="content">
+
+            <div id="demo-menu" class="icons">
+                <div class="icon-item  active">
+                    <div class="icon" style="background-position-y: 0px;">
+                    </div>
+                    <div class="title">
+
+                        G-active</div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -69px;">
+                    </div>
+                    <div class="title">
+                        G-con-1</div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -138px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 21 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 22 -->icon-2
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -207px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 26 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 27 -->icon-3
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -276px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 31 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 32 -->icon-4
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -345px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 36 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 37 -->icon-5
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -414px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 41 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 42 -->icon-6
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -483px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 46 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 47 -->icon-7
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -552px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 51 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 52 -->icon-8
+                        <!-- /react-text -->
+                    </div>
+                </div>
+                <div class="icon-item ">
+                    <div class="icon" style="background-position-y: -621px;"> </div>
+                    <div class="title">
+                        <!-- react-text: 56 -->G-
+                        <!-- /react-text -->
+                        <!-- react-text: 57 -->icon-9
+                        <!-- /react-text -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div> actions-count :
+            <span id="clean-count"> 0</span>
+        </div>
     </div>
-</div>
-<h1>Existing canvas:</h1>
-<canvas width="500" height="200"></canvas>
-<script type="text/javascript" src="../dist/html2canvas.js"></script>
-<button onclick='capture()'>Run html2canvas</button>
-<button onclick='clean()'>Clean html2canvas</button>
+    </div>
+    <h1>Existing canvas:</h1>
+    <canvas width="500" height="200"></canvas>
+    <script type="text/javascript" src="../dist/html2canvas.js"></script>
+    <button onclick='capture()'>Run html2canvas</button>
+    <button onclick='clean()'>Clean html2canvas</button>
 
-<script type="text/javascript">
-    var canvas = document.querySelector("canvas");
-    var ctx = canvas.getContext("2d");
-
- 
-    ctx.beginPath();
-    ctx.arc(75,75,50,0,Math.PI*2,true); // Outer circle
-    ctx.moveTo(110,75);
-    ctx.arc(75,75,35,0,Math.PI,false);   // Mouth (clockwise)
-    ctx.moveTo(65,65);
-    ctx.arc(60,65,5,0,Math.PI*2,true);  // Left eye
-    ctx.moveTo(95,65);
-    ctx.arc(90,65,5,0,Math.PI*2,true);  // Right eye
-    ctx.stroke();
-
-    function clean(){
-         ctx.clearRect(0, 0, canvas.width,  canvas.height);
-         document.querySelector('#clean-count').innerText = parseInt(document.querySelector('#clean-count').innerText)+1;
-    }
+    <script type="text/javascript">
+        var canvas = document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
 
 
-    function capture(){
-    
-        document.querySelector('#clean-count').innerText = parseInt(document.querySelector('#clean-count').innerText)+1;
+        ctx.beginPath();
+        ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
+        ctx.moveTo(110, 75);
+        ctx.arc(75, 75, 35, 0, Math.PI, false); // Mouth (clockwise)
+        ctx.moveTo(65, 65);
+        ctx.arc(60, 65, 5, 0, Math.PI * 2, true); // Left eye
+        ctx.moveTo(95, 65);
+        ctx.arc(90, 65, 5, 0, Math.PI * 2, true); // Right eye
+        ctx.stroke();
 
-        html2canvas(document.querySelector("#content"), {canvas: canvas, reuseContainer: true}).then(function(canvas) {
-            console.log('Drew on the existing canvas');
-        });
-    }
+        function clean() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.querySelector('#clean-count').innerText = parseInt(document.querySelector('#clean-count').innerText) +
+                1;
+        }
 
-</script>
+
+        function capture() {
+
+            document.querySelector('#clean-count').innerText = parseInt(document.querySelector('#clean-count').innerText) +
+                1;
+
+            html2canvas(document.querySelector("#content"), {
+                canvas: canvas,
+                reuseContainer: true
+            }).then(function (canvas) {
+                console.log('Drew on the existing canvas');
+            });
+        }
+
+    </script>
 </body>
+
 </html>

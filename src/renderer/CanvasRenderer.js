@@ -46,6 +46,7 @@ export default class CanvasRenderer implements RenderTarget<HTMLCanvasElement> {
         );
         //will auto clean
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0)';
 
         this.options = options;
         this.canvas.width = Math.floor(options.width * options.scale);

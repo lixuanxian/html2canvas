@@ -1,15 +1,15 @@
 /* @flow */
 'use strict';
-import type {Bounds} from './Bounds';
-import type {Options} from './index';
-import type {PseudoContentData, PseudoContentItem} from './PseudoNodeContent';
+import type { Bounds } from './Bounds';
+import type { Options } from './index';
+import type { PseudoContentData, PseudoContentItem } from './PseudoNodeContent';
 import type Logger from './Logger';
 
-import {parseBounds} from './Bounds';
-import {Proxy} from './Proxy';
+import { parseBounds } from './Bounds';
+import { Proxy } from './Proxy';
 import ResourceLoader from './ResourceLoader';
-import {copyCSSStyles} from './Util';
-import {parseBackgroundImage} from './parsing/background';
+import { copyCSSStyles } from './Util';
+import { parseBackgroundImage } from './parsing/background';
 import CanvasRenderer from './renderer/CanvasRenderer';
 import {
     parseCounterReset,
@@ -20,7 +20,7 @@ import {
 
 const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
 window.REUSE_CACHE = {
-    documentClone:null
+    documentClone: null
 };
 export class DocumentCloner {
     scrolledElements: Array<[HTMLElement, number, number]>;
@@ -60,15 +60,18 @@ export class DocumentCloner {
 
     reuse(element: ?HTMLElement,
         logger: Logger,
-         renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>){
-            this.referenceElement = element;
-            this.logger = logger;
-            this.resourceLoader.logger = logger;
-            this.copyStyles = false;
-            this.inlineImages = false;
-            this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
-            return this;
-        }
+        renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>) {
+        this.referenceElement = element;
+        this.logger = logger;
+        this.resourceLoader.logger = logger;
+        this.copyStyles = false;
+        this.inlineImages = false;
+
+        // this.documentElement.querySelector("#"+this.referenceElement.id).innerHTML = 
+        //     element.ownerDocument.documentElement.querySelector("#"+this.referenceElement.id).innerHTML
+
+        return this;
+    }
 
     inlineAllImages(node: ?HTMLElement) {
         if (this.inlineImages && node) {
@@ -191,13 +194,13 @@ export class DocumentCloner {
             const iframeKey = generateIframeKey();
             tempIframe.setAttribute('data-html2canvas-internal-iframe-key', iframeKey);
 
-            const {width, height} = parseBounds(node, 0, 0);
+            const { width, height } = parseBounds(node, 0, 0);
 
             this.resourceLoader.cache[iframeKey] = getIframeDocumentElement(node, this.options)
                 .then(documentElement => {
                     return this.renderer(
                         documentElement,
-                        {  
+                        {
                             async: this.options.async,
                             allowTaint: this.options.allowTaint,
                             backgroundColor: '#ffffff',
@@ -206,7 +209,7 @@ export class DocumentCloner {
                             logging: this.options.logging,
                             proxy: this.options.proxy,
                             removeContainer: this.options.removeContainer,
-                            reuseContainer:  this.options.reuseContainer,
+                            reuseContainer: this.options.reuseContainer,
                             scale: this.options.scale,
                             foreignObjectRendering: this.options.foreignObjectRendering,
                             useCORS: this.options.useCORS,
@@ -298,7 +301,7 @@ export class DocumentCloner {
                         // $FlowFixMe
                         !this.options.ignoreElements(child)))
             ) {
-                 if (!this.copyStyles || child.nodeName !== 'STYLE' ) {
+                if (!this.copyStyles || child.nodeName !== 'STYLE') {
                     clone.appendChild(this.cloneNode(child));
                 }
             }
@@ -424,7 +427,7 @@ const cloneCanvasContents = (canvas: HTMLCanvasElement, clonedCanvas: HTMLCanvas
                 clonedCtx.drawImage(canvas, 0, 0);
             }
         }
-    } catch (e) {}
+    } catch (e) { }
 };
 
 const inlinePseudoElement = (
@@ -525,34 +528,34 @@ const getIframeDocumentElement = (
     } catch (e) {
         return options.proxy
             ? Proxy(node.src, options)
-                  .then(html => {
-                      const match = html.match(DATA_URI_REGEXP);
-                      if (!match) {
-                          return Promise.reject();
-                      }
+                .then(html => {
+                    const match = html.match(DATA_URI_REGEXP);
+                    if (!match) {
+                        return Promise.reject();
+                    }
 
-                      return match[2] === 'base64'
-                          ? window.atob(decodeURIComponent(match[3]))
-                          : decodeURIComponent(match[3]);
-                  })
-                  .then(html =>
-                      createIframeContainer(
-                          node.ownerDocument,
-                          parseBounds(node, 0, 0),
-                          options
-                      ).then(cloneIframeContainer => {
-                          const cloneWindow = cloneIframeContainer.contentWindow;
-                          const documentClone = cloneWindow.document;
-                          documentClone.open();
-                          documentClone.write(html);
-                          const iframeLoad = iframeLoader(cloneIframeContainer).then(
-                              () => documentClone.documentElement
-                          );
+                    return match[2] === 'base64'
+                        ? window.atob(decodeURIComponent(match[3]))
+                        : decodeURIComponent(match[3]);
+                })
+                .then(html =>
+                    createIframeContainer(
+                        node.ownerDocument,
+                        parseBounds(node, 0, 0),
+                        options
+                    ).then(cloneIframeContainer => {
+                        const cloneWindow = cloneIframeContainer.contentWindow;
+                        const documentClone = cloneWindow.document;
+                        documentClone.open();
+                        documentClone.write(html);
+                        const iframeLoad = iframeLoader(cloneIframeContainer).then(
+                            () => documentClone.documentElement
+                        );
 
-                          documentClone.close();
-                          return iframeLoad;
-                      })
-                  )
+                        documentClone.close();
+                        return iframeLoad;
+                    })
+                )
             : Promise.reject();
     }
 };
@@ -561,19 +564,19 @@ const createIframeContainer = (
     ownerDocument: Document,
     bounds: Bounds,
     options: Options,
- ): Promise<HTMLIFrameElement> => {
- 
-    if(options.reuseContainer && ownerDocument.getElementById("html2canvas-container-reuse")){
+): Promise<HTMLIFrameElement> => {
+
+    if (options.reuseContainer && ownerDocument.getElementById("html2canvas-container-reuse")) {
 
         const reuseIframe = ownerDocument.getElementById("html2canvas-container-reuse");
         reuseIframe.isReuse = true;
-         return Promise.resolve(reuseIframe);
+        return Promise.resolve(reuseIframe);
     }
 
     const cloneIframeContainer = ownerDocument.createElement('iframe');
     cloneIframeContainer.isReuse = false;
     cloneIframeContainer.className = 'html2canvas-container';
-    if(options.reuseContainer){
+    if (options.reuseContainer) {
         cloneIframeContainer.id = 'html2canvas-container-reuse';
     }
 
@@ -602,22 +605,22 @@ const iframeLoader = (cloneIframeContainer: HTMLIFrameElement): Promise<HTMLIFra
     const documentClone = cloneWindow.document;
 
     return new Promise((resolve, reject) => {
-        if(documentClone.body.childNodes.length > 0 &&
-            documentClone.readyState === 'complete'){
-                 resolve(cloneIframeContainer);
-            }else{
-        cloneWindow.onload = cloneIframeContainer.onload = documentClone.onreadystatechange = () => {
-            const interval = setInterval(() => {
-                if (
-                    documentClone.body.childNodes.length > 0 &&
-                    documentClone.readyState === 'complete'
-                ) {
-                    clearInterval(interval);
-                    resolve(cloneIframeContainer);
-                }
-            }, 50);
-        };
-    }
+        if (documentClone.body.childNodes.length > 0 &&
+            documentClone.readyState === 'complete') {
+            resolve(cloneIframeContainer);
+        } else {
+            cloneWindow.onload = cloneIframeContainer.onload = documentClone.onreadystatechange = () => {
+                const interval = setInterval(() => {
+                    if (
+                        documentClone.body.childNodes.length > 0 &&
+                        documentClone.readyState === 'complete'
+                    ) {
+                        clearInterval(interval);
+                        resolve(cloneIframeContainer);
+                    }
+                }, 50);
+            };
+        }
     });
 };
 
@@ -630,19 +633,19 @@ export const cloneWindow = (
     renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
 ): Promise<[HTMLIFrameElement, HTMLElement, ResourceLoader]> => {
 
-    if(!referenceElement.id){
+    if (!referenceElement.id) {
         referenceElement.id = 'html2canvas-reference-element'
     }
 
     if (__DEV__) {
-        logger.log(`start cloneWindow DocumentCloner `, referenceElement.id );
+        logger.log(`start cloneWindow DocumentCloner `, referenceElement.id);
     }
-    
+
     // const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer); 
 
-    if(options.reuseContainer &&  window.REUSE_CACHE.documentClone){
-        window.REUSE_CACHE.documentClone  =    window.REUSE_CACHE.documentClone.reuse(referenceElement,logger,renderer);;
-    }else{
+    if (options.reuseContainer && window.REUSE_CACHE.documentClone) {
+        window.REUSE_CACHE.documentClone = window.REUSE_CACHE.documentClone.reuse(referenceElement, logger, renderer);;
+    } else {
         window.REUSE_CACHE.documentClone = new DocumentCloner(referenceElement, options, logger, false, renderer);
     }
     const cloner = window.REUSE_CACHE.documentClone;
@@ -653,9 +656,9 @@ export const cloneWindow = (
     const scrollX = ownerDocument.defaultView.pageXOffset;
     const scrollY = ownerDocument.defaultView.pageYOffset;
 
-    return createIframeContainer(ownerDocument, bounds , options).then(cloneIframeContainer => {
+    return createIframeContainer(ownerDocument, bounds, options).then(cloneIframeContainer => {
         if (__DEV__) {
-            logger.log( cloneIframeContainer.isReuse ? `reuseIframeContainer` : `createIframeContainer`);
+            logger.log(cloneIframeContainer.isReuse ? `reuseIframeContainer` : `createIframeContainer`);
         }
 
         const isReuseIframe = cloneIframeContainer.isReuse
@@ -663,7 +666,13 @@ export const cloneWindow = (
         const cloneWindow = cloneIframeContainer.contentWindow;
         const documentClone = cloneWindow.document;
 
+        if (isReuseIframe) {
 
+            // documentClone.documentElement.querySelector('head').replaceWith(
+            //     documentClone.adoptNode(cloner.documentElement.querySelector('head'))
+            // );
+            documentClone.documentElement.querySelector("#" + referenceElement.id).innerHTML = referenceElement.innerHTML;
+        }
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
              if window url is about:blank, we can assign the url to current by writing onto the document
              */
@@ -692,35 +701,26 @@ export const cloneWindow = (
             const onclone = options.onclone;
 
             return cloner.clonedReferenceElement instanceof cloneWindow.HTMLElement ||
-            cloner.clonedReferenceElement instanceof ownerDocument.defaultView.HTMLElement ||
-            cloner.clonedReferenceElement instanceof HTMLElement
+                cloner.clonedReferenceElement instanceof ownerDocument.defaultView.HTMLElement ||
+                cloner.clonedReferenceElement instanceof HTMLElement
                 ? typeof onclone === 'function'
-                  ? Promise.resolve().then(() => onclone(documentClone)).then(() => result)
-                  : result
+                    ? Promise.resolve().then(() => onclone(documentClone)).then(() => result)
+                    : result
                 : Promise.reject(
-                      __DEV__
-                          ? `Error finding the ${referenceElement.nodeName} in the cloned document`
-                          : ''
-                  );
+                    __DEV__
+                        ? `Error finding the ${referenceElement.nodeName} in the cloned document`
+                        : ''
+                );
         });
 
         if (__DEV__) {
             logger.log(`documentClone`);
         }
-        if(isReuseIframe){
-             
-            // documentClone.documentElement.querySelector('head').replaceWith(
-            //     documentClone.adoptNode(cloner.documentElement.querySelector('head'))
-            // );
-            documentClone.documentElement.querySelector("#"+referenceElement.id).replaceWith(
-                documentClone.adoptNode(cloner.documentElement.querySelector("#"+referenceElement.id))
-            );
-
-        }else{ 
+        if (!isReuseIframe) {
 
             documentClone.open();
             documentClone.write(`${serializeDoctype(document.doctype)}<html><head></head></body></body></html>`);
-             // Chrome scrolls the parent document for some reason after the write to the cloned window???
+            // Chrome scrolls the parent document for some reason after the write to the cloned window???
             restoreOwnerScroll(referenceElement.ownerDocument, scrollX, scrollY);
             documentClone.replaceChild(
                 documentClone.adoptNode(cloner.documentElement),
@@ -734,7 +734,7 @@ export const cloneWindow = (
         if (__DEV__) {
             logger.log(`documentClone end`);
         }
-     
+
         return iframeLoad;
     });
 };

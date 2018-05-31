@@ -1,0 +1,209 @@
+canvas {
+    border: 1px solid black;
+}
+
+body{
+    background-color: transparent;
+}
+
+button {
+    clear: both;
+    display: block;
+}
+
+#content {
+    background: rgba(100, 255, 255, 0.2);
+    padding: 50px 10px;
+}
+
+.hide {
+    display: none;
+}
+
+ 
+#vr-title {
+ 
+    background-color: #939598;
+    padding: 20px;
+    width: 730px;
+    height: 100px;
+ 
+}
+
+#vr-title>div.item {
+    float: left;
+    border-right: 1px solid #FFFFFF;
+    height: 100%;
+    padding: 0 3px;
+}
+
+#vr-title>div.item:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+#vr-title>div.item:first-child {
+    padding-left: 0;
+}
+
+#vr-title .logo-group {
+    width: 154px;
+    background-image: url('adl-logo.png');
+    background-repeat: no-repeat;
+    background-size: 130px;
+    background-position: center;
+    background-position-x: 6px;
+}
+
+#vr-title .button-group {
+    width: 266px;
+}
+
+#vr-title .button-group>div.twoLine {
+    margin-top: -10px;
+}
+
+#vr-title .button-group>div.oneLine{
+    margin-top: 0px;
+}
+
+#vr-title .button-group .button-detail {
+    width: 100%;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bolder;
+    color: #000000;
+    display: inline-block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#vr-title .button-group .button-detail .active {
+    background-color: #4169E1;
+}
+
+#vr-title .button-group .status-detail {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    font-size: 21px;
+    font-weight: bolder;
+    color: #FFFFFF;
+    display: inline-block;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 0 2%;
+}
+
+#vr-title .button-group .status-detail .oneLine {
+    padding-top: 66px;
+}
+
+#vr-title .button-group .status-detail .twoLine {
+    padding-top: -33px;
+}
+
+#vr-title .button-group .status-detail .title-explain {
+    height: 6px;
+    text-align: center;
+    font-size: 6px;
+    line-height: 6px;
+    color: #000000;
+}
+
+#vr-title>div.date-group {
+    /* width: 400px; */
+    padding: 15px 20px;
+}
+
+#vr-title .date-group .content {
+    width: 80px;
+    height: auto;
+    background-color: #4169E1;
+    border: #FFFFFF 1px solid;
+    color: #000000;
+    font-size: 18px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+#vr-title .legend-group {
+    color: wheat;
+    width: 158px;
+    height: 80px;
+    margin: -60px 0 0px 550px;
+}
+
+#vr-title .legend-group .legend-title {
+    font-size: 14px;
+    height: 20px;
+    font-weight: bolder;
+    text-align: center;
+    margin: 0 auto;
+    color: white;
+}
+
+#vr-title .legend-group .legend-list {
+    text-align: center;
+    font-size: 12px;
+    text-align: left;
+    margin: 0 auto 4px auto;
+    color: white;
+    height: 52px;
+    line-height: 12px;
+}
+
+#vr-title .legend-group .legend-list .legend-item {
+    margin-top: 5px;
+    height: 14px;
+    float: left;
+}
+#vr-title .legend-group .legend-list.two .legend-item {
+    margin: 6px 0;
+}
+
+#vr-title .legend-group .legend-list .legend-item span.glyphicon {
+    margin-left: 7px;
+    margin-right: -25px;
+    float: left;
+    width: 40px;
+}
+
+#vr-title .legend-group .legend-list .legend-item span.legend-text {
+    margin-left: 0;
+    text-align: right;
+}
+
+#vr-title .legend-group .legend-list .legend-item.fully-inclusive span.glyphicon {
+    color: #4279d1
+}
+
+#vr-title .legend-group .legend-list .legend-item.non-inclusive span.glyphicon {
+    color: #a6cee8
+}
+
+#vr-title .legend-group .legend-list .legend-item.not-protected span.glyphicon {
+    color: #eca357
+}
+
+#vr-title .legend-group .legend-list .legend-item span.glyphicon.glyphicon-point {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+}
+
+#vr-title .legend-group .legend-list .legend-item.legend-point span.legend-text {
+    margin-left: 15px;
+}
+
+#vr-title .legend-group .legend-list .legend-item.more-report .glyphicon-point {
+    background-color: #4279d1
+}
+
+#vr-title .legend-group .legend-list .legend-item.zero-report .glyphicon-point {
+    background-color: #eca357
+}
+
+#vr-title .legend-group .legend-list .legend-item.no-report .glyphicon-point {
+    background-color: #ff1717
+}

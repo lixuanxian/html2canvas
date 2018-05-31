@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Using an existing canvas to draw on</title>
+    <link rel="stylesheet" href="bootstrap-style.css">
+    
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+
+</head>
+
+<body>
+    <div>
+        <h1>HTML content to render:</h1>
+        <div id="content">
+
+            <div id="demo-menu" class="icons">
+                 <div id="vr-title" class="debug">
+                 <div class="item logo-group ">
+                 </div>
+                 <div class="item button-group ">
+                 <div class="status-detail  oneLine">Idaho Laws</div>
+                 <div class="button-detail" style="font-size: 15px;">Protected Categories : All</div>
+                 </div>
+                 <div class="item date-group ">
+                 <div class="content">2016</div>
+                 </div>
+                 <div class="item legend-group ">
+                 <div class="legend-list">
+                 <div class="legend-item fully-inclusive">
+                 <span class="glyphicon glyphicon-stop"></span>
+                 <span class="legend-text">Fully Inclusive Laws</span>
+                 </div>
+                 <div class="legend-item non-inclusive">
+                 <span class="glyphicon glyphicon-stop"></span>
+                 <span class="legend-text">Non-Inclusive Laws</span>
+                 </div><div class="legend-item not-protected">
+                 <span class="glyphicon glyphicon-stop"></span>
+                 <span class="legend-text">Not Protected</span>
+                 </div>
+                 </div>
+                 </div>
+                 </div>
+
+                 <div> actions-count :
+                    <span id="clean-count"> 0</span>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+    </div>
+    <h1>Existing canvas:</h1>
+    <canvas width="500" height="200"></canvas>
+    <script type="text/javascript" src="../dist/html2canvas.js"></script>
+    <button onclick='capture()'>Run html2canvas</button>
+    <button onclick='clean()'>Clean html2canvas</button>
+
+    <script type="text/javascript">
+        var canvas = document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
+
+
+        ctx.beginPath();
+        ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
+        ctx.moveTo(110, 75);
+        ctx.arc(75, 75, 35, 0, Math.PI, false); // Mouth (clockwise)
+        ctx.moveTo(65, 65);
+        ctx.arc(60, 65, 5, 0, Math.PI * 2, true); // Left eye
+        ctx.moveTo(95, 65);
+        ctx.arc(90, 65, 5, 0, Math.PI * 2, true); // Right eye
+        ctx.stroke();
+
+        function clean() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.querySelector('#clean-count').innerText = parseInt(document.querySelector('#clean-count').innerText) +
+                1;
+        }
+
+
+        function capture() {
+
+            document.querySelector('#clean-count').innerText = parseInt(document.querySelector('#clean-count').innerText) +
+                1;
+
+            html2canvas(document.querySelector("#content"), {
+                canvas: canvas,
+                reuseContainer: true
+            }).then(function (canvas) {
+                console.log('Drew on the existing canvas');
+            });
+        }
+
+    </script>
+</body>
+
+</html>

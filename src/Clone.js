@@ -19,7 +19,9 @@ import {
 } from './PseudoNodeContent';
 
 const IGNORE_ATTRIBUTE = 'data-html2canvas-ignore';
-
+window.REUSE_CACHE = {
+    documentClone:null
+};
 export class DocumentCloner {
     scrolledElements: Array<[HTMLElement, number, number]>;
     referenceElement: HTMLElement;
@@ -55,6 +57,18 @@ export class DocumentCloner {
         // $FlowFixMe
         this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
     }
+
+    reuse(element: ?HTMLElement,
+        logger: Logger,
+         renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>){
+            this.referenceElement = element;
+            this.logger = logger;
+            this.resourceLoader.logger = logger;
+            this.copyStyles = false;
+            this.inlineImages = false;
+            this.documentElement = this.cloneNode(element.ownerDocument.documentElement);
+            return this;
+        }
 
     inlineAllImages(node: ?HTMLElement) {
         if (this.inlineImages && node) {
@@ -615,10 +629,24 @@ export const cloneWindow = (
     logger: Logger,
     renderer: (element: HTMLElement, options: Options, logger: Logger) => Promise<*>
 ): Promise<[HTMLIFrameElement, HTMLElement, ResourceLoader]> => {
-    if (__DEV__) {
-        logger.log(`start cloneWindow DocumentCloner`);
+
+    if(!referenceElement.id){
+        referenceElement.id = 'html2canvas-reference-element'
     }
-    const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer);
+
+    if (__DEV__) {
+        logger.log(`start cloneWindow DocumentCloner `, referenceElement.id );
+    }
+    
+    // const cloner = new DocumentCloner(referenceElement, options, logger, false, renderer); 
+
+    if(options.reuseContainer &&  window.REUSE_CACHE.documentClone){
+        window.REUSE_CACHE.documentClone  =    window.REUSE_CACHE.documentClone.reuse(referenceElement,logger,renderer);;
+    }else{
+        window.REUSE_CACHE.documentClone = new DocumentCloner(referenceElement, options, logger, false, renderer);
+    }
+    const cloner = window.REUSE_CACHE.documentClone;
+
     if (__DEV__) {
         logger.log(`end cloneWindow DocumentCloner`);
     }
@@ -635,7 +663,6 @@ export const cloneWindow = (
         const cloneWindow = cloneIframeContainer.contentWindow;
         const documentClone = cloneWindow.document;
 
-   
 
         /* Chrome doesn't detect relative background-images assigned in inline <style> sheets when fetched through getComputedStyle
              if window url is about:blank, we can assign the url to current by writing onto the document
@@ -685,9 +712,8 @@ export const cloneWindow = (
             // documentClone.documentElement.querySelector('head').replaceWith(
             //     documentClone.adoptNode(cloner.documentElement.querySelector('head'))
             // );
-
-            documentClone.documentElement.querySelector('body').replaceWith(
-                documentClone.adoptNode(cloner.documentElement.querySelector('body'))
+            documentClone.documentElement.querySelector("#"+referenceElement.id).replaceWith(
+                documentClone.adoptNode(cloner.documentElement.querySelector("#"+referenceElement.id))
             );
 
         }else{ 
